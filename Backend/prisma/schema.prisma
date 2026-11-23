@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Student {
+  id       Int             @id @default(autoincrement())
+  roll_no  Int             @unique
+  name     String
+  email    String          @unique
+  dept     String
+  password String
+  borrows  BorrowRecord[]
+  requests BorrowRequest[] // <-- ADD THIS LINE
+}
+
+model Book {
+  id              Int             @id @default(autoincrement())
+  title           String
+  author          String
+  price           Float
+  totalQuantity   Int
+  availableCopies Int
+  borrows         BorrowRecord[]
+  requests        BorrowRequest[] // <-- ADD THIS LINE
+}
+
+model BorrowRecord {
+  id          Int           @id @default(autoincrement())
+  studentId   Int
+  student     Student       @relation(fields: [studentId], references: [id])
+  bookId      Int
+  book        Book          @relation(fields: [bookId], references: [id])
+  borrowDate  DateTime      @default(now())
+  dueDate     DateTime      
+  returnDate  DateTime?     
+  status      BorrowStatus  @default(ACTIVE)
+}
+
+model BorrowRequest {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  bookId      Int
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  requestDate DateTime @default(now())
+
+  student     Student  @relation(fields: [studentId], references: [id])
+  book        Book     @relation(fields: [bookId], references: [id])
+}
+
+enum BorrowStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
