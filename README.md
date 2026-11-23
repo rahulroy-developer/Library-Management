@@ -1,4 +1,4 @@
-# LibraryOS — Library Management System
+# Library Management System
 
 A full-stack web application built to manage library books, enrolled students, and book borrowing/returning records with real-time stock tracking.
 
